@@ -29,28 +29,23 @@ generateResults() {
 	script_to_run="$1"
 	file_to_write_to="$2"
 	grammar="$3"
+	test_type="$4"
 
 	echo "================================="
-	echo "Running Good Tests for $grammar"
+	echo "Running $test_type Tests for $grammar"
 	echo "================================="
 
-	echo "$grammar Good Tests" >> "$file_to_write_to"
+	echo "$grammar $test_type Tests" >> "$file_to_write_to"
 	echo "===================" >> "$file_to_write_to"
 
-	for file in "$testsdir/$grammar"/GoodTests/*; do
+	for file in "$testsdir/$grammar"/${test_type}Tests/*; do
 		[ "${file##*.}" = "java" ] && $script_to_run "$file" >> "$file_to_write_to"
 	done
+}
 
-	echo "================================="
-	echo "Running Bad Tests for $grammar"
-	echo "================================="
-
-	echo "$grammar Bad Tests" >> "$file_to_write_to"
-	echo "===================" >> "$file_to_write_to"
-
-	for file in "$testsdir/$grammar"/BadTests/*; do
-		[ "${file##*.}" = "java" ] && $script_to_run "$file" >> "$file_to_write_to"
-	done
+trimFilePaths() {
+	output_file="$1"
+	sed --in-place --regexp-extended "s#((\.\.)?/(\w*\+?/)*)?(\w*\.java)[0-9.:\-]*#\4:#" "$output_file"
 }
 
 main() {
@@ -100,7 +95,8 @@ main() {
 		echo "================================="
 
 		for grammar in $grammars; do
-			generateResults ./espressocr "$refoutput" "$grammar"
+			generateResults ./espressocr "$refoutput" "$grammar" "Good"
+			generateResults ./espressocr "$refoutput" "$grammar" "Bad"
 		done
 	fi
 
@@ -109,12 +105,14 @@ main() {
 	echo "================================="
 
 	for grammar in $grammars; do
-		generateResults ./espressoc "$output" "$grammar"
+		generateResults ./espressoc "$output" "$grammar" "Good"
+		generateResults ./espressoc "$output" "$grammar" "Bad"
 	done
 
 	# Trim file path names and line numbers so that both outputs match
-	sed --in-place --regexp-extended "s#((\.\.)?/(\w*\+?/)*)?(\w*\.java)[0-9.:\-]*#\4:#" "$output"
-	sed --in-place --regexp-extended "s#((\.\.)?/(\w*\+?/)*)?(\w*\.java)[0-9.:\-]*#\4:#" "$refoutput"
+	trimFilePaths "$output"
+	trimFilePaths "$refoutput"
+
 	diff "$output" "$refoutput" > "$finaldiff"
 
 	echo "Done! Check $finaldiff to see any discrepancies between the output of our compiler versus the reference compiler"
