@@ -2,7 +2,7 @@
 # something up on YouTube, and play the first video result. As an added flex, this program can also fullscreen both the Chrome process
 # and the YouTube video, and it can skip an ad if one is playing.
 # Written by Jordan King
-# Last edited 1/13/21
+# Last edited 2/21/24
 
 from selenium import webdriver
 # Let's the ENTER key be sent
@@ -15,6 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 # Allows for double clicking
 from selenium.webdriver import ActionChains
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 # Ask the user what video they would like to search up
 user_choice = input("What video would you like to search for? ")
@@ -41,24 +42,24 @@ wait.until(visible((By.XPATH, '//*[@id="video-title"]/yt-formatted-string')))
 driver.find_element_by_xpath(
     '//*[@id="video-title"]/yt-formatted-string').click()
 
-# Make the video fullscreen by double clicking on it
 try:
+    # Make the video fullscreen by double clicking on it
     wait.until(visible((By.XPATH, '//*[@id="movie_player"]/div[1]/video')))
     video = driver.find_element_by_xpath(
         '//*[@id="movie_player"]/div[1]/video')
-except:
-    print("No videos with that title were found! Please try again.")
-    quit()
 
-# Double click the video to fullscreen it
-action = ActionChains(driver)
-action.double_click(video).perform()
+    # Double click the video to fullscreen it
+    action = ActionChains(driver)
+    action.double_click(video).perform()
 
-# Skip whatever ad is playing, if there is one
-try:
+    # Skip whatever ad is playing, if there is one
     wait.until(EC.element_to_be_clickable(
         (By.CLASS_NAME, 'ytp-ad-skip-button-container')))
     driver.find_element_by_class_name(
         'ytp-ad-skip-button-container').click()
-except:
-    print("Ad was probably either unskipable or nonexistent.")
+
+except NoSuchElementException:
+    print("No videos with that title were found! Please try again.")
+
+except TimeoutException:
+    print("Either the ad was unskippable or nonexistent.")
