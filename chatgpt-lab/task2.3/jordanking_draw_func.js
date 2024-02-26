@@ -1,27 +1,30 @@
-// Acts as a loop that draws multiple short lines to give off the impression of drawing
+// Acts as a loop that draws multiple short lines to give off the impression of drawing.
 function draw(e) {
-  // Prevents drawing if pen isn't touching pad
-  if (!painting) 
-    return;
+  // Prevents the user from drawing if pen isn't touching pad.
+  if (!painting) return;
 
-  // Gets accurate position of pen (canvas pos - offset)
-  xPos = e.clientX - canvas.offsetLeft - 2;
-  yPos = e.clientY - canvas.offsetTop - 2;
-  pressure = e.pressure;
+  // Destructure data from the event object and calculate offsets.
+  const { clientX, clientY, pressure } = e;
+  const offsetX = canvas.offsetLeft + 2;
+  const offsetY = canvas.offsetTop + 2;
 
-  // Pen visuals
+  // Gets accurate position of pen.
+  const xPos = clientX - offsetX;
+  const yPos = clientY - offsetY;
+
+  // Set the visual data for the pen stroke.
   ctx.lineWidth = pressure * 5;
   ctx.lineCap = "round";
   ctx.strokeStyle = "#000000";
 
-  // Actual drawing feature
+  // Draw the line.
   ctx.lineTo(xPos, yPos);
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(xPos, yPos);
 
-  // Used in velocity calculation
-  totalDistance += Math.sqrt(Math.pow(xPos - lastX, 2) + Math.pow(yPos - lastY, 2)) * 0.0002645833; // Converted from pixels to meters
+  // Calculate the total distance travelled (will be used in velocity calculation).
+  totalDistance += Math.hypot(xPos - lastX, yPos - lastY) * 0.0002645833;
   lastX = xPos;
   lastY = yPos;
 }
