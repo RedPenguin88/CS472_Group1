@@ -24,7 +24,8 @@ function draw(e) {
   ctx.moveTo(xPos, yPos);
 
   // Calculate the total distance travelled (will be used in velocity calculation).
-  totalDistance += Math.hypot(xPos - lastX, yPos - lastY) * 0.0002645833;
+  const PIXEL_TO_METER_SCALAR = 0.0002645833;
+  totalDistance += Math.hypot(xPos - lastX, yPos - lastY) * PIXEL_TO_METER_SCALAR; 
   lastX = xPos;
   lastY = yPos;
 }
