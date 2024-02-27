@@ -5,21 +5,41 @@
 import networkx as nx
 
 def add_router(graph, router_name):
+    """
+    Add a router to the graph.
 
+    Parameters:
+    - graph: NetworkX graph
+    - router_name: Name of the router to be added
+    """
     if router_name not in graph.nodes():
         graph.add_node(router_name)
     else:
         print("\nThe router name", router_name, "already exists.")
 
 def add_connection(graph, router1, router2, cost):
+    """
+    Add a connection between two routers.
 
+    Parameters:
+    - graph: NetworkX graph
+    - router1: Name of the first router
+    - router2: Name of the second router
+    - cost: Cost of the connection
+    """
     if graph.has_edge(router1, router2):
         print("\nA connection already exists between", router1, "and", router2, "\nData is being overwritten.")
         graph.remove_edge(router1, router2)
     graph.add_edge(router1, router2, weight=cost)
 
 def ls_algorithm(graph, source_router):
+    """
+    Implement the Link-State algorithm using Dijkstra’s algorithm.
 
+    Parameters:
+    - graph: NetworkX graph
+    - source_router: Name of the source router
+    """
     nodeList = list(graph.nodes())
     print("\nLS Algorithm ( from source", source_router, ")")
     for target_router in nodeList:
@@ -31,7 +51,13 @@ def ls_algorithm(graph, source_router):
             print(source_router, "->", target_router, "is not a valid path.")
 
 def dv_algorithm(graph, source_router):
+    """
+    Implement the Distance-Vector algorithm using Bellman-Ford.
 
+    Parameters:
+    - graph: NetworkX graph
+    - source_router: Name of the source router
+    """
     nodeList = list(graph.nodes())
     print("\nDV Algorithm ( from source", source_router, ")")
     for target_router in nodeList:
@@ -43,7 +69,9 @@ def dv_algorithm(graph, source_router):
             print(source_router, "->", target_router, "is not a valid path.")
 
 def main():
-
+    """
+    Initialize a network graph and handle main menu options.
+    """
     G = nx.Graph()
 
     while True:
