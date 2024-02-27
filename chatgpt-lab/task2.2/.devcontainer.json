@@ -1,0 +1,33 @@
+{
+  // Development container configuration for Node.js & TypeScript projects.
+  // See format details at https://aka.ms/devcontainer.json and configuration options at https://github.com/devcontainers/templates/tree/main/src/typescript-node
+  "name": "Node.js & TypeScript",
+  
+  // Specifies the Docker image to use for the development container.
+  // Alternatives include using a Dockerfile or Docker Compose file. More info at https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/typescript-node",
+  
+  // List of ports to forward from the container to the host, facilitating local access to services running in the container.
+  "forwardPorts": [3000],
+  "appPort": [3000], // Legacy, similar to forwardPorts. Consider using only forwardPorts for clarity.
+  
+  // Command to run after the container is created, used here to update system packages and install the latest version of Express.
+  "postCreateCommand": "sudo apt-get update && sudo apt-get upgrade -y && npm install express@latest",
+  
+  // Customizations section for specifying tool-specific properties, such as VS Code extensions to enhance the development experience.
+  "customizations": {
+    "vscode": {
+      // Extensions to automatically install in the dev container for code assistance and formatting.
+      "extensions": [
+        "GitHub.copilot", // AI-powered code suggestions.
+        "esbenp.prettier-vscode" // Code formatter.
+      ]
+    }
+  },
+  
+  // Command to run when the container starts, typically used to kick off the development server.
+  "postStartCommand": "npm run dev"
+  
+  // Optional: Uncomment to connect as the root user instead of the default non-root user. More info at https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}
