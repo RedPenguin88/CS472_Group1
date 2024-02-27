@@ -1,0 +1,2 @@
+// Greeting based on time of day
+const greeting = hours < 12 ? 'Good Morning' : (hours < 17 ? 'Good Afternoon' : 'Good Evening');
